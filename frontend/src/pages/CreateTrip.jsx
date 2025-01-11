@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Plane, Calendar, Wallet, Users } from "lucide-react";
+import { AI_PROMPT, chatSession } from "@/service/AIModel";
 
 const PlanTrip = () => {
   const [formData, setFormData] = useState({
@@ -9,9 +10,22 @@ const PlanTrip = () => {
     travelType: ""
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    if(formData.days>5){
+      alert("Only less than 5 days allowed..")
+      return;
+    }
+    const FINAL_TRIP=AI_PROMPT
+      .replace('{location}', formData.destination)
+      .replace('{NoOfDays}', formData.days)
+      .replace('{size}', formData.travelType)
+      .replace('{budget}', formData.budget )
+    
+    console.log(FINAL_TRIP)
+
+    const result=await chatSession.sendMessage(FINAL_TRIP)
+    console.log(result.response.text())
   };
 
   return (
